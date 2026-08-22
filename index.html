@@ -255,3 +255,361 @@ body {
 }
 
 .file-label {
+
+  display: block;
+
+  padding: 12px;
+
+  text-align: center;
+
+  border: 1px dashed #bbb;
+
+  border-radius: 9px;
+
+  margin-bottom: 15px;
+
+  color: #666;
+
+}
+
+.modal-buttons {
+
+  display: flex;
+
+  gap: 8px;
+
+}
+
+.modal-buttons button {
+
+  flex: 1;
+
+  padding: 12px;
+
+  border: 0;
+
+  border-radius: 9px;
+
+}
+
+.save-btn {
+
+  background: #222;
+
+  color: white;
+
+}
+
+.cancel-btn {
+
+  background: #eee;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+  <h1>포카 체크리스트</h1>
+
+  <p>내 포카를 한눈에 정리해보자</p>
+
+</div>
+
+<div class="info" id="info">
+
+  가지고 있는 포카 0장 / 전체 0장
+
+</div>
+
+<button class="add-button" onclick="openModal()">
+
+  ＋ 포카 추가하기
+
+</button>
+
+<div class="section">
+
+  <h2>내 포카</h2>
+
+  <div class="grid" id="cardList"></div>
+
+</div>
+
+<div class="modal" id="modal">
+
+  <div class="modal-box">
+
+    <h2>포카 추가</h2>
+
+    <input
+
+      type="text"
+
+      id="cardName"
+
+      placeholder="포카 이름을 입력해줘"
+
+    >
+
+    <label class="file-label">
+
+      📷 사진 선택하기
+
+      <input
+
+        type="file"
+
+        id="cardImage"
+
+        accept="image/*"
+
+        style="display:none"
+
+      >
+
+    </label>
+
+    <div class="modal-buttons">
+
+      <button class="cancel-btn" onclick="closeModal()">
+
+        취소
+
+      </button>
+
+      <button class="save-btn" onclick="addCard()">
+
+        추가하기
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+let cards = JSON.parse(localStorage.getItem("photocardList")) || [];
+
+function saveCards() {
+
+  localStorage.setItem("photocardList", JSON.stringify(cards));
+
+}
+
+function openModal() {
+
+  document.getElementById("modal").style.display = "flex";
+
+  document.getElementById("cardName").value = "";
+
+  document.getElementById("cardImage").value = "";
+
+}
+
+function closeModal() {
+
+  document.getElementById("modal").style.display = "none";
+
+}
+
+function addCard() {
+
+  const name = document.getElementById("cardName").value.trim();
+
+  const imageInput = document.getElementById("cardImage");
+
+  if (!name) {
+
+    alert("포카 이름을 적어줘!");
+
+    return;
+
+  }
+
+  if (imageInput.files.length > 0) {
+
+    const file = imageInput.files[0];
+
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+
+      cards.push({
+
+        id: Date.now(),
+
+        name: name,
+
+        image: e.target.result,
+
+        owned: false
+
+      });
+
+      saveCards();
+
+      renderCards();
+
+      closeModal();
+
+    };
+
+    reader.readAsDataURL(file);
+
+  } else {
+
+    cards.push({
+
+      id: Date.now(),
+
+      name: name,
+
+      image: "",
+
+      owned: false
+
+    });
+
+    saveCards();
+
+    renderCards();
+
+    closeModal();
+
+  }
+
+}
+
+function toggleOwned(id) {
+
+  const card = cards.find(c => c.id === id);
+
+  if (card) {
+
+    card.owned = !card.owned;
+
+    saveCards();
+
+    renderCards();
+
+  }
+
+}
+
+function deleteCard(id) {
+
+  if (!confirm("이 포카를 삭제할까?")) {
+
+    return;
+
+  }
+
+  cards = cards.filter(c => c.id !== id);
+
+  saveCards();
+
+  renderCards();
+
+}
+
+function renderCards() {
+
+  const list = document.getElementById("cardList");
+
+  list.innerHTML = "";
+
+  let ownedCount = cards.filter(c => c.owned).length;
+
+  document.getElementById("info").innerText =
+
+    `가지고 있는 포카 ${ownedCount}장 / 전체 ${cards.length}장`;
+
+  if (cards.length === 0) {
+
+    list.innerHTML =
+
+      `<p style="color:#aaa;">아직 추가한 포카가 없어!</p>`;
+
+    return;
+
+  }
+
+  cards.forEach(card => {
+
+    const div = document.createElement("div");
+
+    div.className = "card";
+
+    let imageHTML = card.image
+
+      ? `<img src="${card.image}" alt="${card.name}">`
+
+      : `<div class="no-image">포카 사진 없음</div>`;
+
+    div.innerHTML = `
+
+      ${imageHTML}
+
+      <div class="card-name">
+
+        ${escapeHTML(card.name)}
+
+      </div>
+
+      <div class="card-status">
+
+        ${card.owned ? "✓ 보유" : "미보유"}
+
+      </div>
+
+      <button onclick="toggleOwned(${card.id})">
+
+        ${card.owned ? "미보유로 변경" : "보유로 체크"}
+
+      </button>
+
+      <button
+
+        class="delete"
+
+        onclick="deleteCard(${card.id})"
+
+      >
+
+        삭제
+
+      </button>
+
+    `;
+
+    list.appendChild(div);
+
+  });
+
+}
+
+function escapeHTML(text) {
+
+  const div = document.createElement("div");
+
+  div.textContent = text;
+
+  return div.innerHTML;
+
+}
+
+renderCards();
+
+</script>
+
+</body>
+
+</html>
