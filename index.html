@@ -98,11 +98,23 @@ body {
 
 }
 
-.section h2 {
+.version-section {
 
-  font-size: 18px;
+  margin-bottom: 28px;
 
-  margin: 10px 0;
+}
+
+.version-title {
+
+  font-size: 19px;
+
+  font-weight: bold;
+
+  margin: 0 0 12px;
+
+  padding-bottom: 8px;
+
+  border-bottom: 2px solid #222;
 
 }
 
@@ -200,6 +212,14 @@ body {
 
 }
 
+.empty {
+
+  color: #aaa;
+
+  font-size: 14px;
+
+}
+
 .modal {
 
   display: none;
@@ -215,6 +235,8 @@ body {
   justify-content: center;
 
   padding: 20px;
+
+  z-index: 100;
 
 }
 
@@ -334,11 +356,11 @@ body {
 
 <div class="section">
 
-  <h2>내 포카</h2>
-
-  <div class="grid" id="cardList"></div>
+  <div id="cardList"></div>
 
 </div>
+
+<!-- 포카 추가 창 -->
 
 <div class="modal" id="modal">
 
@@ -350,9 +372,19 @@ body {
 
       type="text"
 
+      id="versionName"
+
+      placeholder="버전 이름 (예: 앨범 A ver.)"
+
+    >
+
+    <input
+
+      type="text"
+
       id="cardName"
 
-      placeholder="포카 이름을 입력해줘"
+      placeholder="포카 이름 (예: 성호)"
 
     >
 
@@ -376,13 +408,25 @@ body {
 
     <div class="modal-buttons">
 
-      <button class="cancel-btn" onclick="closeModal()">
+      <button
+
+        class="cancel-btn"
+
+        onclick="closeModal()"
+
+      >
 
         취소
 
       </button>
 
-      <button class="save-btn" onclick="addCard()">
+      <button
+
+        class="save-btn"
+
+        onclick="addCard()"
+
+      >
 
         추가하기
 
@@ -396,17 +440,49 @@ body {
 
 <script>
 
-let cards = JSON.parse(localStorage.getItem("photocardList")) || [];
+/* 기존에 저장되어 있던 포카 불러오기 */
+
+let cards = JSON.parse(
+
+  localStorage.getItem("photocardList")
+
+) || [];
+
+/* 기존 포카에 버전 정보가 없으면 기본 버전으로 처리 */
+
+cards = cards.map(card => {
+
+  if (!card.version) {
+
+    card.version = "버전 미지정";
+
+  }
+
+  return card;
+
+});
+
+/* 저장 */
 
 function saveCards() {
 
-  localStorage.setItem("photocardList", JSON.stringify(cards));
+  localStorage.setItem(
+
+    "photocardList",
+
+    JSON.stringify(cards)
+
+  );
 
 }
+
+/* 추가창 열기 */
 
 function openModal() {
 
   document.getElementById("modal").style.display = "flex";
+
+  document.getElementById("versionName").value = "";
 
   document.getElementById("cardName").value = "";
 
@@ -414,17 +490,41 @@ function openModal() {
 
 }
 
+/* 추가창 닫기 */
+
 function closeModal() {
 
   document.getElementById("modal").style.display = "none";
 
 }
 
+/* 포카 추가 */
+
 function addCard() {
 
-  const name = document.getElementById("cardName").value.trim();
+  const version =
 
-  const imageInput = document.getElementById("cardImage");
+    document.getElementById("versionName")
+
+      .value.trim();
+
+  const name =
+
+    document.getElementById("cardName")
+
+      .value.trim();
+
+  const imageInput =
+
+    document.getElementById("cardImage");
+
+  if (!version) {
+
+    alert("버전 이름을 적어줘!");
+
+    return;
+
+  }
 
   if (!name) {
 
@@ -433,6 +533,8 @@ function addCard() {
     return;
 
   }
+
+  /* 사진이 있는 경우 */
 
   if (imageInput.files.length > 0) {
 
@@ -445,6 +547,8 @@ function addCard() {
       cards.push({
 
         id: Date.now(),
+
+        version: version,
 
         name: name,
 
@@ -466,9 +570,13 @@ function addCard() {
 
   } else {
 
+    /* 사진이 없는 경우 */
+
     cards.push({
 
       id: Date.now(),
+
+      version: version,
 
       name: name,
 
@@ -488,9 +596,15 @@ function addCard() {
 
 }
 
+/* 보유 여부 변경 */
+
 function toggleOwned(id) {
 
-  const card = cards.find(c => c.id === id);
+  const card = cards.find(
+
+    c => c.id === id
+
+  );
 
   if (card) {
 
@@ -504,6 +618,8 @@ function toggleOwned(id) {
 
 }
 
+/* 포카 삭제 */
+
 function deleteCard(id) {
 
   if (!confirm("이 포카를 삭제할까?")) {
@@ -512,7 +628,11 @@ function deleteCard(id) {
 
   }
 
-  cards = cards.filter(c => c.id !== id);
+  cards = cards.filter(
+
+    c => c.id !== id
+
+  );
 
   saveCards();
 
@@ -520,13 +640,19 @@ function deleteCard(id) {
 
 }
 
+/* 포카 화면 표시 */
+
 function renderCards() {
 
-  const list = document.getElementById("cardList");
+  const list =
+
+    document.getElementById("cardList");
 
   list.innerHTML = "";
 
-  let ownedCount = cards.filter(c => c.owned).length;
+  const ownedCount =
+
+    cards.filter(c => c.owned).length;
 
   document.getElementById("info").innerText =
 
@@ -536,75 +662,163 @@ function renderCards() {
 
     list.innerHTML =
 
-      `<p style="color:#aaa;">아직 추가한 포카가 없어!</p>`;
+      `<p class="empty">아직 추가한 포카가 없어!</p>`;
 
     return;
 
   }
 
+  /*
+
+    버전별로 포카를 묶기
+
+  */
+
+  const grouped = {};
+
   cards.forEach(card => {
 
-    const div = document.createElement("div");
+    const version =
 
-    div.className = "card";
+      card.version || "버전 미지정";
 
-    let imageHTML = card.image
+    if (!grouped[version]) {
 
-      ? `<img src="${card.image}" alt="${card.name}">`
+      grouped[version] = [];
 
-      : `<div class="no-image">포카 사진 없음</div>`;
+    }
 
-    div.innerHTML = `
+    grouped[version].push(card);
 
-      ${imageHTML}
+  });
 
-      <div class="card-name">
+  /*
 
-        ${escapeHTML(card.name)}
+    버전별로 화면에 표시
 
-      </div>
+  */
 
-      <div class="card-status">
+  Object.keys(grouped).forEach(version => {
 
-        ${card.owned ? "✓ 보유" : "미보유"}
+    const section =
 
-      </div>
+      document.createElement("div");
 
-      <button onclick="toggleOwned(${card.id})">
+    section.className =
 
-        ${card.owned ? "미보유로 변경" : "보유로 체크"}
+      "version-section";
 
-      </button>
+    const title =
 
-      <button
+      document.createElement("div");
 
-        class="delete"
+    title.className =
 
-        onclick="deleteCard(${card.id})"
+      "version-title";
 
-      >
+    title.textContent =
 
-        삭제
+      version;
 
-      </button>
+    const grid =
 
-    `;
+      document.createElement("div");
 
-    list.appendChild(div);
+    grid.className =
+
+      "grid";
+
+    grouped[version].forEach(card => {
+
+      const div =
+
+        document.createElement("div");
+
+      div.className =
+
+        "card";
+
+      let imageHTML = card.image
+
+        ? `<img src="${card.image}" alt="${escapeHTML(card.name)}">`
+
+        : `<div class="no-image">포카 사진 없음</div>`;
+
+      div.innerHTML = `
+
+        ${imageHTML}
+
+        <div class="card-name">
+
+          ${escapeHTML(card.name)}
+
+        </div>
+
+        <div class="card-status">
+
+          ${card.owned ? "✓ 보유" : "미보유"}
+
+        </div>
+
+        <button
+
+          onclick="toggleOwned(${card.id})"
+
+        >
+
+          ${card.owned
+
+            ? "미보유로 변경"
+
+            : "보유로 체크"}
+
+        </button>
+
+        <button
+
+          class="delete"
+
+          onclick="deleteCard(${card.id})"
+
+        >
+
+          삭제
+
+        </button>
+
+      `;
+
+      grid.appendChild(div);
+
+    });
+
+    section.appendChild(title);
+
+    section.appendChild(grid);
+
+    list.appendChild(section);
 
   });
 
 }
 
+/* HTML 문자 안전하게 표시 */
+
 function escapeHTML(text) {
 
-  const div = document.createElement("div");
+  const div =
 
-  div.textContent = text;
+    document.createElement("div");
+
+  div.textContent =
+
+    text;
 
   return div.innerHTML;
 
 }
+
+/* 처음 실행 */
 
 renderCards();
 
