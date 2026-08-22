@@ -1,232 +1,257 @@
 <!DOCTYPE html>
+
 <html lang="ko">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>포카 체크리스트</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8">
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f8f8f8;
-      color: #222;
-    }
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    .header {
-      padding: 25px 20px 15px;
-      background: white;
-    }
+<title>포카 체크리스트</title>
 
-    .header h1 {
-      margin: 0;
-      font-size: 24px;
-    }
+<style>
 
-    .header p {
-      margin: 8px 0 0;
-      color: #888;
-      font-size: 14px;
-    }
+* {
 
-    .count {
-      margin-top: 15px;
-      padding: 12px 15px;
-      background: #f1f1f1;
-      border-radius: 12px;
-      font-size: 14px;
-    }
+  box-sizing: border-box;
 
-    .content {
-      padding: 20px;
-    }
+}
 
-    .category {
-      margin-bottom: 30px;
-    }
+body {
 
-    .category-title {
-      font-size: 19px;
-      font-weight: bold;
-      margin-bottom: 13px;
-    }
+  margin: 0;
 
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
+  font-family: Arial, sans-serif;
 
-    .card {
-      background: white;
-      border-radius: 14px;
-      padding: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      cursor: pointer;
-      transition: 0.2s;
-      user-select: none;
-    }
+  background: #f8f8f8;
 
-    .card-image {
-      width: 100%;
-      aspect-ratio: 3 / 4;
-      border-radius: 10px;
-      background: #d9d9d9;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #999;
-      font-size: 13px;
-      filter: grayscale(100%);
-      transition: 0.2s;
-    }
+  color: #222;
 
-    .card.owned .card-image {
-      background: linear-gradient(135deg, #ffd6e7, #d8e7ff);
-      color: #555;
-      filter: grayscale(0%);
-    }
+}
 
-    .card-name {
-      margin-top: 9px;
-      font-size: 14px;
-      font-weight: bold;
-    }
+.header {
 
-    .card-status {
-      margin-top: 4px;
-      font-size: 12px;
-      color: #999;
-    }
+  padding: 22px 18px 12px;
 
-    .card.owned .card-status {
-      color: #777;
-    }
+  background: white;
 
-    @media (min-width: 600px) {
-      .cards {
-        grid-template-columns: repeat(4, 1fr);
-      }
-    }
-  </style>
-</head>
+}
 
-<body>
+.header h1 {
 
-  <div class="header">
-    <h1>포카 체크리스트</h1>
-    <p>내 포카를 한눈에 정리해보자</p>
+  margin: 0;
 
-    <div class="count">
-      가지고 있는 포카 <b id="ownedCount">0</b>장 /
-      전체 <b id="totalCount">0</b>장
-    </div>
-  </div>
+  font-size: 24px;
 
-  <div class="content" id="content"></div>
+}
 
-  <script>
-    const categories = [
-      {
-        name: "앨범 포카",
-        cards: ["앨범 포카 1", "앨범 포카 2", "앨범 포카 3", "앨범 포카 4"]
-      },
-      {
-        name: "특전 포카",
-        cards: ["특전 포카 1", "특전 포카 2", "특전 포카 3", "특전 포카 4"]
-      },
-      {
-        name: "럭키 포카",
-        cards: ["럭키 포카 1", "럭키 포카 2", "럭키 포카 3", "럭키 포카 4"]
-      },
-      {
-        name: "기타 포카",
-        cards: ["기타 포카 1", "기타 포카 2", "기타 포카 3", "기타 포카 4"]
-      }
-    ];
+.header p {
 
-    const content = document.getElementById("content");
+  margin: 7px 0 0;
 
-    let owned = JSON.parse(
-      localStorage.getItem("ownedCards") || "[]"
-    );
+  color: #888;
 
-    function makeId(category, card) {
-      return category + "-" + card;
-    }
+  font-size: 13px;
 
-    function render() {
-      content.innerHTML = "";
+}
 
-      let total = 0;
+.info {
 
-      categories.forEach(category => {
-        const section = document.createElement("div");
-        section.className = "category";
+  margin: 12px;
 
-        const title = document.createElement("div");
-        title.className = "category-title";
-        title.textContent = category.name;
+  padding: 13px;
 
-        const cards = document.createElement("div");
-        cards.className = "cards";
+  background: #eeeeee;
 
-        category.cards.forEach(cardName => {
-          total++;
+  border-radius: 10px;
 
-          const id = makeId(category.name, cardName);
-          const isOwned = owned.includes(id);
+  font-size: 14px;
 
-          const card = document.createElement("div");
-          card.className = "card" + (isOwned ? " owned" : "");
+}
 
-          card.innerHTML = `
-            <div class="card-image">
-              포카 사진
-            </div>
+.add-button {
 
-            <div class="card-name">
-              ${cardName}
-            </div>
+  margin: 0 12px 20px;
 
-            <div class="card-status">
-              ${isOwned ? "보유 중 ✓" : "미보유"}
-            </div>
-          `;
+  width: calc(100% - 24px);
 
-          card.addEventListener("click", () => {
-            if (owned.includes(id)) {
-              owned = owned.filter(item => item !== id);
-            } else {
-              owned.push(id);
-            }
+  padding: 14px;
 
-            localStorage.setItem(
-              "ownedCards",
-              JSON.stringify(owned)
-            );
+  border: 0;
 
-            render();
-          });
+  border-radius: 12px;
 
-          cards.appendChild(card);
-        });
+  background: #222;
 
-        section.appendChild(title);
-        section.appendChild(cards);
-        content.appendChild(section);
-      });
+  color: white;
 
-      document.getElementById("ownedCount").textContent = owned.length;
-      document.getElementById("totalCount").textContent = total;
-    }
+  font-size: 16px;
 
-    render();
-  </script>
+  font-weight: bold;
 
-</body>
-</html>
+}
+
+.section {
+
+  padding: 0 12px 25px;
+
+}
+
+.section h2 {
+
+  font-size: 18px;
+
+  margin: 10px 0;
+
+}
+
+.grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 12px;
+
+}
+
+.card {
+
+  background: white;
+
+  border-radius: 12px;
+
+  padding: 8px;
+
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+
+}
+
+.card img,
+
+.no-image {
+
+  width: 100%;
+
+  aspect-ratio: 2 / 3;
+
+  object-fit: cover;
+
+  border-radius: 8px;
+
+  background: #eeeeee;
+
+}
+
+.no-image {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  color: #aaa;
+
+  font-size: 13px;
+
+}
+
+.card-name {
+
+  margin: 8px 2px 5px;
+
+  font-size: 14px;
+
+  font-weight: bold;
+
+}
+
+.card-status {
+
+  font-size: 12px;
+
+  color: #999;
+
+}
+
+.card button {
+
+  margin-top: 7px;
+
+  width: 100%;
+
+  padding: 8px;
+
+  border: 0;
+
+  border-radius: 8px;
+
+  background: #eeeeee;
+
+}
+
+.card button.delete {
+
+  background: #f3dddd;
+
+  color: #a33;
+
+}
+
+.modal {
+
+  display: none;
+
+  position: fixed;
+
+  inset: 0;
+
+  background: rgba(0,0,0,0.45);
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 20px;
+
+}
+
+.modal-box {
+
+  width: 100%;
+
+  max-width: 420px;
+
+  background: white;
+
+  border-radius: 16px;
+
+  padding: 20px;
+
+}
+
+.modal-box h2 {
+
+  margin-top: 0;
+
+}
+
+.modal-box input[type="text"] {
+
+  width: 100%;
+
+  padding: 12px;
+
+  border: 1px solid #ddd;
+
+  border-radius: 9px;
+
+  margin-bottom: 12px;
+
+  font-size: 15px;
+
+}
+
+.file-label {
