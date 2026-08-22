@@ -30,6 +30,8 @@ body {
 
 }
 
+/* 상단 */
+
 .header {
 
   padding: 22px 18px 12px;
@@ -56,6 +58,8 @@ body {
 
 }
 
+/* 보유 개수 */
+
 .info {
 
   margin: 12px;
@@ -69,6 +73,8 @@ body {
   font-size: 14px;
 
 }
+
+/* 추가 버튼 */
 
 .add-button {
 
@@ -92,6 +98,8 @@ body {
 
 }
 
+/* 전체 영역 */
+
 .section {
 
   padding: 0 12px 25px;
@@ -103,6 +111,8 @@ body {
   margin-bottom: 28px;
 
 }
+
+/* 버전 제목 */
 
 .version-title {
 
@@ -118,6 +128,8 @@ body {
 
 }
 
+/* 포카 그리드 */
+
 .grid {
 
   display: grid;
@@ -128,33 +140,69 @@ body {
 
 }
 
+/* 포카 카드 */
+
 .card {
 
   background: white;
 
   border-radius: 12px;
 
-  padding: 8px;
+  padding: 10px;
 
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 
+  transition: 0.2s;
+
 }
+
+/* 미보유 포카 */
+
+.card.not-owned {
+
+  background: #e5e5e5;
+
+  filter: grayscale(100%);
+
+  opacity: 0.65;
+
+}
+
+/* 보유 포카 */
+
+.card.owned {
+
+  background: white;
+
+  filter: none;
+
+  opacity: 1;
+
+}
+
+/* 사진 */
 
 .card img,
 
 .no-image {
 
-  width: 100%;
+  width: 25%;
 
   aspect-ratio: 2 / 3;
 
   object-fit: cover;
 
-  border-radius: 8px;
+  border-radius: 6px;
 
   background: #eeeeee;
 
+  display: block;
+
+  margin: 0 auto;
+
 }
+
+/* 사진이 없을 때 */
 
 .no-image {
 
@@ -166,9 +214,13 @@ body {
 
   color: #aaa;
 
-  font-size: 13px;
+  font-size: 10px;
+
+  text-align: center;
 
 }
+
+/* 포카 이름 */
 
 .card-name {
 
@@ -178,7 +230,11 @@ body {
 
   font-weight: bold;
 
+  text-align: center;
+
 }
+
+/* 상태 */
 
 .card-status {
 
@@ -186,7 +242,11 @@ body {
 
   color: #999;
 
+  text-align: center;
+
 }
+
+/* 버튼 */
 
 .card button {
 
@@ -204,6 +264,8 @@ body {
 
 }
 
+/* 삭제 버튼 */
+
 .card button.delete {
 
   background: #f3dddd;
@@ -212,6 +274,8 @@ body {
 
 }
 
+/* 포카 없음 */
+
 .empty {
 
   color: #aaa;
@@ -219,6 +283,8 @@ body {
   font-size: 14px;
 
 }
+
+/* 모달 */
 
 .modal {
 
@@ -240,6 +306,8 @@ body {
 
 }
 
+/* 추가창 */
+
 .modal-box {
 
   width: 100%;
@@ -260,6 +328,8 @@ body {
 
 }
 
+/* 입력창 */
+
 .modal-box input[type="text"] {
 
   width: 100%;
@@ -275,6 +345,8 @@ body {
   font-size: 15px;
 
 }
+
+/* 사진 선택 */
 
 .file-label {
 
@@ -293,6 +365,8 @@ body {
   color: #666;
 
 }
+
+/* 모달 버튼 */
 
 .modal-buttons {
 
@@ -334,6 +408,8 @@ body {
 
 <body>
 
+<!-- 상단 -->
+
 <div class="header">
 
   <h1>포카 체크리스트</h1>
@@ -342,17 +418,23 @@ body {
 
 </div>
 
+<!-- 보유 개수 -->
+
 <div class="info" id="info">
 
   가지고 있는 포카 0장 / 전체 0장
 
 </div>
 
+<!-- 포카 추가 -->
+
 <button class="add-button" onclick="openModal()">
 
   ＋ 포카 추가하기
 
 </button>
+
+<!-- 포카 목록 -->
 
 <div class="section">
 
@@ -440,7 +522,7 @@ body {
 
 <script>
 
-/* 기존에 저장되어 있던 포카 불러오기 */
+/* 저장된 포카 불러오기 */
 
 let cards = JSON.parse(
 
@@ -448,7 +530,7 @@ let cards = JSON.parse(
 
 ) || [];
 
-/* 기존 포카에 버전 정보가 없으면 기본 버전으로 처리 */
+/* 버전 정보가 없는 기존 포카 처리 */
 
 cards = cards.map(card => {
 
@@ -596,7 +678,7 @@ function addCard() {
 
 }
 
-/* 보유 여부 변경 */
+/* 보유 / 미보유 변경 */
 
 function toggleOwned(id) {
 
@@ -650,6 +732,8 @@ function renderCards() {
 
   list.innerHTML = "";
 
+  /* 보유 개수 */
+
   const ownedCount =
 
     cards.filter(c => c.owned).length;
@@ -657,6 +741,8 @@ function renderCards() {
   document.getElementById("info").innerText =
 
     `가지고 있는 포카 ${ownedCount}장 / 전체 ${cards.length}장`;
+
+  /* 포카가 없을 때 */
 
   if (cards.length === 0) {
 
@@ -668,11 +754,7 @@ function renderCards() {
 
   }
 
-  /*
-
-    버전별로 포카를 묶기
-
-  */
+  /* 버전별로 묶기 */
 
   const grouped = {};
 
@@ -692,11 +774,7 @@ function renderCards() {
 
   });
 
-  /*
-
-    버전별로 화면에 표시
-
-  */
+  /* 버전별 표시 */
 
   Object.keys(grouped).forEach(version => {
 
@@ -707,6 +785,8 @@ function renderCards() {
     section.className =
 
       "version-section";
+
+    /* 버전 제목 */
 
     const title =
 
@@ -719,6 +799,8 @@ function renderCards() {
     title.textContent =
 
       version;
+
+    /* 포카 그리드 */
 
     const grid =
 
@@ -734,15 +816,23 @@ function renderCards() {
 
         document.createElement("div");
 
+      /* 보유 여부에 따라 색깔 변경 */
+
       div.className =
 
-        "card";
+        card.owned
+
+          ? "card owned"
+
+          : "card not-owned";
+
+      /* 사진 */
 
       let imageHTML = card.image
 
         ? `<img src="${card.image}" alt="${escapeHTML(card.name)}">`
 
-        : `<div class="no-image">포카 사진 없음</div>`;
+        : `<div class="no-image">사진 없음</div>`;
 
       div.innerHTML = `
 
