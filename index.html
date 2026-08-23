@@ -36,7 +36,7 @@ body {
 
   background: white;
 
-  padding: 22px 16px 16px;
+  padding: 20px 16px 15px;
 
   border-bottom: 1px solid #eee;
 
@@ -64,27 +64,89 @@ body {
 
 }
 
+/* 검색창 */
+
+.search-box {
+
+  margin-top: 15px;
+
+  position: relative;
+
+}
+
+.search-input {
+
+  width: 100%;
+
+  height: 42px;
+
+  border: 1px solid #ddd;
+
+  border-radius: 10px;
+
+  background: #f6f6f6;
+
+  padding: 0 40px 0 38px;
+
+  font-size: 14px;
+
+  outline: none;
+
+}
+
+.search-input:focus {
+
+  background: white;
+
+  border-color: #aaa;
+
+}
+
+.search-icon {
+
+  position: absolute;
+
+  left: 13px;
+
+  top: 11px;
+
+  font-size: 17px;
+
+  color: #888;
+
+}
+
+.clear-search {
+
+  display: none;
+
+  position: absolute;
+
+  right: 10px;
+
+  top: 7px;
+
+  width: 28px;
+
+  height: 28px;
+
+  border: none;
+
+  border-radius: 50%;
+
+  background: #ddd;
+
+  color: #666;
+
+  font-size: 15px;
+
+}
+
 /* 내용 */
 
 .content {
 
   padding: 18px 12px 100px;
-
-}
-
-/* 처음 아무것도 없을 때 */
-
-.empty {
-
-  text-align: center;
-
-  color: #aaa;
-
-  padding: 90px 20px;
-
-  font-size: 14px;
-
-  line-height: 1.7;
 
 }
 
@@ -144,8 +206,6 @@ body {
 
 }
 
-/* 사진 */
-
 .card-image {
 
   width: 100%;
@@ -162,7 +222,7 @@ body {
 
 }
 
-/* 사진이 없는 경우 */
+/* 사진 없음 */
 
 .no-photo {
 
@@ -242,6 +302,36 @@ body {
 
 }
 
+/* 검색 결과 없음 */
+
+.no-result {
+
+  text-align: center;
+
+  color: #aaa;
+
+  padding: 80px 20px;
+
+  font-size: 14px;
+
+}
+
+/* 아무것도 없을 때 */
+
+.empty {
+
+  text-align: center;
+
+  color: #aaa;
+
+  padding: 90px 20px;
+
+  font-size: 14px;
+
+  line-height: 1.7;
+
+}
+
 /* 추가 버튼 */
 
 .add-button {
@@ -274,7 +364,7 @@ body {
 
 }
 
-/* 팝업 배경 */
+/* 팝업 */
 
 .modal-bg {
 
@@ -301,8 +391,6 @@ body {
   display: flex;
 
 }
-
-/* 팝업 */
 
 .modal {
 
@@ -380,8 +468,6 @@ body {
 
 }
 
-/* 미리보기 */
-
 #preview {
 
   width: 80px;
@@ -398,7 +484,7 @@ body {
 
 }
 
-/* 버튼 */
+/* 팝업 버튼 */
 
 .modal-buttons {
 
@@ -436,8 +522,6 @@ body {
 
 }
 
-/* 삭제 안내 */
-
 .help {
 
   margin-top: 12px;
@@ -468,8 +552,6 @@ body {
 
 <body>
 
-<!-- 상단 -->
-
 <header class="header">
 
   <h1>포카 체크리스트</h1>
@@ -486,13 +568,53 @@ body {
 
   </div>
 
+  <!-- 검색 -->
+
+  <div class="search-box">
+
+    <span class="search-icon">🔍</span>
+
+    <input
+
+      id="searchInput"
+
+      class="search-input"
+
+      type="search"
+
+      placeholder="포카 이름, 버전, 종류 검색"
+
+      oninput="searchCards()"
+
+    >
+
+    <button
+
+      id="clearSearch"
+
+      class="clear-search"
+
+      onclick="clearSearch()"
+
+    >
+
+      ×
+
+    </button>
+
+  </div>
+
 </header>
 
-<!-- 포카 목록 -->
+<main
 
-<main class="content" id="content"></main>
+  class="content"
 
-<!-- 추가 버튼 -->
+  id="content"
+
+></main>
+
+<!-- 추가 -->
 
 <button
 
@@ -620,21 +742,21 @@ body {
 
 /* ==================================================
 
-   저장 공간
-
-   이전 테스트 데이터와 다른 이름을 사용해서
-
-   처음부터 빈 목록으로 시작함
+   저장 데이터
 
 ================================================== */
 
-const STORAGE_KEY = "my_photocard_checklist_v2";
+const STORAGE_KEY =
 
-let cards = JSON.parse(
+  "my_photocard_checklist_v2";
 
-  localStorage.getItem(STORAGE_KEY)
+let cards =
 
-) || [];
+  JSON.parse(
+
+    localStorage.getItem(STORAGE_KEY)
+
+  ) || [];
 
 let selectedImage = "";
 
@@ -658,6 +780,88 @@ function saveCards() {
 
 /* ==================================================
 
+   검색어
+
+================================================== */
+
+function getSearchText() {
+
+  return document
+
+    .getElementById("searchInput")
+
+    .value
+
+    .trim()
+
+    .toLowerCase();
+
+}
+
+/* ==================================================
+
+   검색
+
+================================================== */
+
+function searchCards() {
+
+  const search =
+
+    getSearchText();
+
+  const clearButton =
+
+    document.getElementById(
+
+      "clearSearch"
+
+    );
+
+  if (search) {
+
+    clearButton.style.display =
+
+      "block";
+
+  } else {
+
+    clearButton.style.display =
+
+      "none";
+
+  }
+
+  render();
+
+}
+
+/* ==================================================
+
+   검색어 지우기
+
+================================================== */
+
+function clearSearch() {
+
+  document.getElementById(
+
+    "searchInput"
+
+  ).value = "";
+
+  document.getElementById(
+
+    "clearSearch"
+
+  ).style.display = "none";
+
+  render();
+
+}
+
+/* ==================================================
+
    화면 만들기
 
 ================================================== */
@@ -666,13 +870,69 @@ function render() {
 
   const content =
 
-    document.getElementById("content");
+    document.getElementById(
+
+      "content"
+
+    );
 
   content.innerHTML = "";
 
-  /* 포카가 하나도 없을 때 */
+  const search =
 
-  if (cards.length === 0) {
+    getSearchText();
+
+  /* 검색 결과 만들기 */
+
+  let filteredCards =
+
+    cards.filter(card => {
+
+      if (!search) {
+
+        return true;
+
+      }
+
+      const name =
+
+        String(card.name || "")
+
+          .toLowerCase();
+
+      const version =
+
+        String(card.version || "")
+
+          .toLowerCase();
+
+      const type =
+
+        String(card.type || "")
+
+          .toLowerCase();
+
+      return (
+
+        name.includes(search) ||
+
+        version.includes(search) ||
+
+        type.includes(search)
+
+      );
+
+    });
+
+  /* 전체 포카도 없고 검색도 없을 때 */
+
+  if (
+
+    cards.length === 0 &&
+
+    !search
+
+  ) {
 
     content.innerHTML = `
 
@@ -694,13 +954,43 @@ function render() {
 
   }
 
-  /* 버전별로 묶기 */
+  /* 검색 결과가 없을 때 */
+
+  if (
+
+    filteredCards.length === 0
+
+  ) {
+
+    content.innerHTML = `
+
+      <div class="no-result">
+
+        검색 결과가 없어.<br>
+
+        다른 이름이나 버전을 검색해봐!
+
+      </div>
+
+    `;
+
+    updateCount();
+
+    return;
+
+  }
+
+  /* 버전별 묶기 */
 
   const versions = {};
 
-  cards.forEach(card => {
+  filteredCards.forEach(card => {
 
-    if (!versions[card.version]) {
+    if (
+
+      !versions[card.version]
+
+    ) {
 
       versions[card.version] = [];
 
@@ -710,217 +1000,247 @@ function render() {
 
   });
 
-  /* 버전 화면 만들기 */
+  /* 버전 출력 */
 
-  Object.keys(versions).forEach(version => {
+  Object.keys(versions)
 
-    const versionCards =
+    .forEach(version => {
 
-      versions[version];
+      const versionCards =
 
-    const owned =
+        versions[version];
 
-      versionCards.filter(
+      const owned =
 
-        card => card.owned
+        versionCards.filter(
 
-      ).length;
+          card => card.owned
 
-    const section =
+        ).length;
 
-      document.createElement("section");
+      const section =
 
-    section.className = "version";
+        document.createElement(
 
-    section.innerHTML = `
+          "section"
 
-      <div class="version-title">
+        );
 
-        ${escapeHTML(version)}
+      section.className =
 
-        <span class="version-count">
+        "version";
 
-          ${owned}/${versionCards.length}
+      section.innerHTML = `
 
-        </span>
+        <div class="version-title">
 
-      </div>
+          ${escapeHTML(version)}
 
-      <div class="card-grid"></div>
+          <span class="version-count">
 
-    `;
+            ${owned}/${versionCards.length}
 
-    const grid =
+          </span>
 
-      section.querySelector(".card-grid");
+        </div>
 
-    /* 포카 하나씩 만들기 */
+        <div class="card-grid"></div>
 
-    versionCards.forEach(card => {
+      `;
 
-      const element =
+      const grid =
 
-        document.createElement("div");
+        section.querySelector(
 
-      element.className =
+          ".card-grid"
 
-        "card" +
+        );
 
-        (card.owned ? " owned" : "");
+      versionCards.forEach(card => {
 
-      /* 사진 */
+        const element =
 
-      let photoHTML;
+          document.createElement(
 
-      if (card.image) {
+            "div"
 
-        photoHTML = `
+          );
 
-          <img
+        element.className =
 
-            class="card-image"
+          "card" +
 
-            src="${card.image}"
+          (card.owned
 
-            alt="${escapeHTML(card.name)}"
+            ? " owned"
 
-          >
+            : "");
 
-        `;
+        let photoHTML;
 
-      } else {
+        if (card.image) {
 
-        photoHTML = `
+          photoHTML = `
 
-          <div class="no-photo">
+            <img
 
-            PHOTO
+              class="card-image"
+
+              src="${card.image}"
+
+              alt="${escapeHTML(card.name)}"
+
+            >
+
+          `;
+
+        } else {
+
+          photoHTML = `
+
+            <div class="no-photo">
+
+              PHOTO
+
+            </div>
+
+          `;
+
+        }
+
+        element.innerHTML = `
+
+          ${photoHTML}
+
+          <div class="card-type">
+
+            ${escapeHTML(
+
+              card.type || "포카"
+
+            )}
+
+          </div>
+
+          <div class="card-name">
+
+            ${escapeHTML(card.name)}
 
           </div>
 
         `;
 
-      }
+        /* 클릭 = 소장/미소장 */
 
-      element.innerHTML = `
+        element.addEventListener(
 
-        ${photoHTML}
+          "click",
 
-        <div class="card-type">
+          function() {
 
-          ${escapeHTML(card.type || "포카")}
+            card.owned =
 
-        </div>
+              !card.owned;
 
-        <div class="card-name">
+            saveCards();
 
-          ${escapeHTML(card.name)}
+            render();
 
-        </div>
+          }
 
-      `;
+        );
 
-      /* 누르면 소장/미소장 */
+        /* 길게 누르기 = 삭제 */
 
-      element.addEventListener(
+        let timer;
 
-        "click",
+        element.addEventListener(
 
-        function() {
+          "touchstart",
 
-          card.owned =
+          function() {
 
-            !card.owned;
+            timer =
 
-          saveCards();
+              setTimeout(
 
-          render();
+                function() {
 
-        }
+                  const answer =
 
-      );
+                    confirm(
 
-      /* 길게 누르면 삭제 */
+                      `"${card.name}" 포카를 삭제할까?`
 
-      let timer;
+                    );
 
-      element.addEventListener(
+                  if (answer) {
 
-        "touchstart",
+                    cards =
 
-        function() {
+                      cards.filter(
 
-          timer = setTimeout(
+                        item =>
 
-            function() {
+                          item.id !== card.id
 
-              const answer =
+                      );
 
-                confirm(
+                    saveCards();
 
-                  `"${card.name}" 포카를 삭제할까?`
+                    render();
 
-                );
+                  }
 
-              if (answer) {
+                },
 
-                cards =
+                800
 
-                  cards.filter(
+              );
 
-                    item =>
+          }
 
-                      item.id !== card.id
+        );
 
-                  );
+        element.addEventListener(
 
-                saveCards();
+          "touchend",
 
-                render();
+          function() {
 
-              }
+            clearTimeout(timer);
 
-            },
+          }
 
-            800
+        );
 
-          );
+        element.addEventListener(
 
-        }
+          "touchmove",
 
-      );
+          function() {
 
-      element.addEventListener(
+            clearTimeout(timer);
 
-        "touchend",
+          }
 
-        function() {
+        );
 
-          clearTimeout(timer);
+        grid.appendChild(
 
-        }
+          element
 
-      );
+        );
 
-      element.addEventListener(
+      });
 
-        "touchmove",
+      content.appendChild(
 
-        function() {
-
-          clearTimeout(timer);
-
-        }
+        section
 
       );
-
-      grid.appendChild(element);
 
     });
-
-    content.appendChild(section);
-
-  });
 
   updateCount();
 
@@ -928,7 +1248,7 @@ function render() {
 
 /* ==================================================
 
-   전체 개수
+   개수
 
 ================================================== */
 
@@ -946,19 +1266,23 @@ function updateCount() {
 
     "ownedCount"
 
-  ).textContent = owned;
+  ).textContent =
+
+    owned;
 
   document.getElementById(
 
     "totalCount"
 
-  ).textContent = cards.length;
+  ).textContent =
+
+    cards.length;
 
 }
 
 /* ==================================================
 
-   팝업 열기
+   팝업
 
 ================================================== */
 
@@ -971,12 +1295,6 @@ function openModal() {
     .classList.add("show");
 
 }
-
-/* ==================================================
-
-   팝업 닫기
-
-================================================== */
 
 function closeModal() {
 
@@ -1014,7 +1332,9 @@ function closeModal() {
 
     "preview"
 
-  ).style.display = "none";
+  ).style.display =
+
+    "none";
 
   selectedImage = "";
 
@@ -1022,7 +1342,7 @@ function closeModal() {
 
 /* ==================================================
 
-   사진 미리보기
+   사진
 
 ================================================== */
 
@@ -1100,29 +1420,31 @@ function addCard() {
 
     ).value.trim();
 
-  /* 이름 확인 */
-
   if (!name) {
 
-    alert("포카 이름을 적어줘!");
+    alert(
+
+      "포카 이름을 적어줘!"
+
+    );
 
     return;
 
   }
-
-  /* 버전 확인 */
 
   if (!version) {
 
-    alert("버전이나 앨범명을 적어줘!");
+    alert(
+
+      "버전이나 앨범명을 적어줘!"
+
+    );
 
     return;
 
   }
 
-  /* 새로운 포카 */
-
-  const newCard = {
+  cards.push({
 
     id: Date.now(),
 
@@ -1136,9 +1458,7 @@ function addCard() {
 
     owned: false
 
-  };
-
-  cards.push(newCard);
+  });
 
   saveCards();
 
@@ -1150,7 +1470,7 @@ function addCard() {
 
 /* ==================================================
 
-   HTML 문자 처리
+   안전한 문자 표시
 
 ================================================== */
 
@@ -1158,15 +1478,45 @@ function escapeHTML(text) {
 
   return String(text)
 
-    .replace(/&/g, "&amp;")
+    .replace(
 
-    .replace(/</g, "&lt;")
+      /&/g,
 
-    .replace(/>/g, "&gt;")
+      "&amp;"
 
-    .replace(/"/g, "&quot;")
+    )
 
-    .replace(/'/g, "&#039;");
+    .replace(
+
+      /</g,
+
+      "&lt;"
+
+    )
+
+    .replace(
+
+      />/g,
+
+      "&gt;"
+
+    )
+
+    .replace(
+
+      /"/g,
+
+      "&quot;"
+
+    )
+
+    .replace(
+
+      /'/g,
+
+      "&#039;"
+
+    );
 
 }
 
