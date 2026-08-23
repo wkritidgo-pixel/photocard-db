@@ -22,11 +22,11 @@ body {
 
   margin: 0;
 
-  font-family: Arial, sans-serif;
-
-  background: #f8f8f8;
+  background: #f7f7f7;
 
   color: #222;
+
+  font-family: Arial, sans-serif;
 
 }
 
@@ -34,43 +34,39 @@ body {
 
 .header {
 
-  padding: 22px 18px 12px;
+  position: sticky;
+
+  top: 0;
+
+  z-index: 100;
 
   background: white;
+
+  padding: 18px 16px 14px;
+
+  border-bottom: 1px solid #eee;
 
 }
 
 .header h1 {
 
-  margin: 0;
+  margin: 0 0 8px;
 
-  font-size: 24px;
+  font-size: 22px;
 
 }
 
-.header p {
-
-  margin: 7px 0 0;
-
-  color: #888;
+.progress {
 
   font-size: 13px;
 
+  color: #777;
+
 }
 
-/* 보유 개수 */
+.progress b {
 
-.info {
-
-  margin: 12px;
-
-  padding: 13px;
-
-  background: #eeeeee;
-
-  border-radius: 10px;
-
-  font-size: 14px;
+  color: #222;
 
 }
 
@@ -78,101 +74,123 @@ body {
 
 .add-button {
 
-  margin: 0 12px 20px;
+  position: fixed;
 
-  width: calc(100% - 24px);
+  right: 18px;
 
-  padding: 14px;
+  bottom: 22px;
 
-  border: 0;
+  z-index: 200;
 
-  border-radius: 12px;
+  width: 55px;
+
+  height: 55px;
+
+  border: none;
+
+  border-radius: 50%;
 
   background: #222;
 
   color: white;
 
-  font-size: 16px;
+  font-size: 30px;
 
-  font-weight: bold;
-
-}
-
-/* 전체 영역 */
-
-.section {
-
-  padding: 0 12px 25px;
+  box-shadow: 0 5px 18px rgba(0,0,0,.2);
 
 }
 
-.version-section {
+/* 내용 */
+
+.content {
+
+  padding: 18px 12px 100px;
+
+}
+
+/* 버전 */
+
+.version {
 
   margin-bottom: 28px;
 
 }
 
-/* 버전 제목 */
-
 .version-title {
 
-  font-size: 19px;
+  font-size: 15px;
 
   font-weight: bold;
 
-  margin: 0 0 12px;
+  margin: 0 4px 11px;
 
-  padding-bottom: 8px;
+}
 
-  border-bottom: 2px solid #222;
+.version-count {
+
+  color: #999;
+
+  font-size: 11px;
+
+  font-weight: normal;
+
+  margin-left: 5px;
 
 }
 
 /* 포카 그리드 */
 
-.grid {
+.card-grid {
 
   display: grid;
 
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(5, 1fr);
 
-  gap: 12px;
+  gap: 8px;
 
 }
 
-/* 포카 카드 */
+/* 포카 */
 
 .card {
 
-  background: white;
+  position: relative;
 
-  border-radius: 12px;
-
-  padding: 10px;
-
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-
-  transition: 0.2s;
+  cursor: pointer;
 
 }
 
-/* 미보유 포카 */
+.card-image {
 
-.card.not-owned {
+  width: 100%;
 
-  background: #e5e5e5;
+  aspect-ratio: 2 / 3;
+
+  object-fit: cover;
+
+  display: block;
+
+  border-radius: 5px;
+
+  background: #ddd;
+
+  transition: .2s;
+
+}
+
+/* 미소장 */
+
+.card:not(.owned) .card-image {
 
   filter: grayscale(100%);
 
-  opacity: 0.65;
+  opacity: .38;
 
 }
 
-/* 보유 포카 */
+/* 소장 */
 
-.card.owned {
-
-  background: white;
+.card.owned .card-image {
 
   filter: none;
 
@@ -180,113 +198,63 @@ body {
 
 }
 
-/* 사진 */
+/* 종류 */
 
-.card img,
+.card-type {
 
-.no-image {
+  position: absolute;
 
-  width: 25%;
+  left: 4px;
 
-  aspect-ratio: 2 / 3;
+  bottom: 4px;
 
-  object-fit: cover;
+  padding: 2px 4px;
 
-  border-radius: 6px;
+  border-radius: 3px;
 
-  background: #eeeeee;
+  background: rgba(0,0,0,.75);
 
-  display: block;
+  color: white;
 
-  margin: 0 auto;
-
-}
-
-/* 사진이 없을 때 */
-
-.no-image {
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  color: #aaa;
-
-  font-size: 10px;
-
-  text-align: center;
+  font-size: 7px;
 
 }
 
-/* 포카 이름 */
+/* 이름 */
 
 .card-name {
 
-  margin: 8px 2px 5px;
-
-  font-size: 14px;
-
-  font-weight: bold;
+  margin-top: 4px;
 
   text-align: center;
 
-}
+  font-size: 9px;
 
-/* 상태 */
+  white-space: nowrap;
 
-.card-status {
+  overflow: hidden;
 
-  font-size: 12px;
-
-  color: #999;
-
-  text-align: center;
+  text-overflow: ellipsis;
 
 }
 
-/* 버튼 */
-
-.card button {
-
-  margin-top: 7px;
-
-  width: 100%;
-
-  padding: 8px;
-
-  border: 0;
-
-  border-radius: 8px;
-
-  background: #eeeeee;
-
-}
-
-/* 삭제 버튼 */
-
-.card button.delete {
-
-  background: #f3dddd;
-
-  color: #a33;
-
-}
-
-/* 포카 없음 */
+/* 빈 화면 */
 
 .empty {
 
+  text-align: center;
+
   color: #aaa;
+
+  padding: 80px 20px;
 
   font-size: 14px;
 
 }
 
-/* 모달 */
+/* 팝업 */
 
-.modal {
+.modal-bg {
 
   display: none;
 
@@ -294,7 +262,9 @@ body {
 
   inset: 0;
 
-  background: rgba(0,0,0,0.45);
+  z-index: 300;
+
+  background: rgba(0,0,0,.45);
 
   align-items: center;
 
@@ -302,17 +272,19 @@ body {
 
   padding: 20px;
 
-  z-index: 100;
+}
+
+.modal-bg.show {
+
+  display: flex;
 
 }
 
-/* 추가창 */
-
-.modal-box {
+.modal {
 
   width: 100%;
 
-  max-width: 420px;
+  max-width: 380px;
 
   background: white;
 
@@ -322,51 +294,77 @@ body {
 
 }
 
-.modal-box h2 {
+.modal h2 {
 
-  margin-top: 0;
+  margin: 0 0 18px;
+
+  font-size: 19px;
 
 }
 
-/* 입력창 */
+.input {
 
-.modal-box input[type="text"] {
+  width: 100%;
+
+  height: 44px;
+
+  border: 1px solid #ddd;
+
+  border-radius: 8px;
+
+  padding: 0 12px;
+
+  margin-bottom: 10px;
+
+  font-size: 14px;
+
+  outline: none;
+
+}
+
+.input:focus {
+
+  border-color: #888;
+
+}
+
+.photo-label {
+
+  display: block;
 
   width: 100%;
 
   padding: 12px;
 
-  border: 1px solid #ddd;
+  border: 1px dashed #bbb;
 
-  border-radius: 9px;
-
-  margin-bottom: 12px;
-
-  font-size: 15px;
-
-}
-
-/* 사진 선택 */
-
-.file-label {
-
-  display: block;
-
-  padding: 12px;
+  border-radius: 8px;
 
   text-align: center;
 
-  border: 1px dashed #bbb;
+  color: #777;
 
-  border-radius: 9px;
+  font-size: 13px;
 
-  margin-bottom: 15px;
-
-  color: #666;
+  margin-bottom: 14px;
 
 }
 
-/* 모달 버튼 */
+#preview {
+
+  width: 80px;
+
+  height: 110px;
+
+  object-fit: cover;
+
+  border-radius: 6px;
+
+  display: none;
+
+  margin: 0 auto 14px;
+
+}
 
 .modal-buttons {
 
@@ -380,15 +378,23 @@ body {
 
   flex: 1;
 
-  padding: 12px;
+  height: 44px;
 
-  border: 0;
+  border: none;
 
-  border-radius: 9px;
+  border-radius: 8px;
+
+  font-size: 14px;
 
 }
 
-.save-btn {
+.cancel {
+
+  background: #eee;
+
+}
+
+.save {
 
   background: #222;
 
@@ -396,9 +402,35 @@ body {
 
 }
 
-.cancel-btn {
+/* 삭제 버튼 */
 
-  background: #eee;
+.delete-button {
+
+  width: 100%;
+
+  height: 38px;
+
+  margin-top: 10px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #f1f1f1;
+
+  color: #777;
+
+}
+
+/* 작은 화면 */
+
+@media (max-width: 350px) {
+
+  .card-grid {
+
+    grid-template-columns: repeat(4, 1fr);
+
+  }
 
 }
 
@@ -408,109 +440,107 @@ body {
 
 <body>
 
-<!-- 상단 -->
-
-<div class="header">
+<header class="header">
 
   <h1>포카 체크리스트</h1>
 
-  <p>내 포카를 한눈에 정리해보자</p>
+  <div class="progress">
 
-</div>
+    <b id="ownedCount">0</b>
 
-<!-- 보유 개수 -->
+    /
 
-<div class="info" id="info">
+    <span id="totalCount">0</span>
 
-  가지고 있는 포카 0장 / 전체 0장
+    장 소장
 
-</div>
+  </div>
 
-<!-- 포카 추가 -->
+</header>
 
-<button class="add-button" onclick="openModal()">
+<main class="content" id="content">
 
-  ＋ 포카 추가하기
+</main>
 
-</button>
+<button class="add-button" onclick="openModal()">+</button>
 
-<!-- 포카 목록 -->
+<!-- 포카 추가 팝업 -->
 
-<div class="section">
+<div class="modal-bg" id="modal">
 
-  <div id="cardList"></div>
-
-</div>
-
-<!-- 포카 추가 창 -->
-
-<div class="modal" id="modal">
-
-  <div class="modal-box">
+  <div class="modal">
 
     <h2>포카 추가</h2>
 
     <input
 
+      class="input"
+
+      id="cardName"
+
       type="text"
 
-      id="versionName"
-
-      placeholder="버전 이름 (예: 앨범 A ver.)"
+      placeholder="포카 이름"
 
     >
 
     <input
 
+      class="input"
+
+      id="versionName"
+
       type="text"
 
-      id="cardName"
-
-      placeholder="포카 이름 (예: 성호)"
+      placeholder="버전 / 앨범명"
 
     >
 
-    <label class="file-label">
+    <input
 
-      📷 사진 선택하기
+      class="input"
+
+      id="cardType"
+
+      type="text"
+
+      placeholder="종류 (예: album, event, 특전)"
+
+    >
+
+    <label class="photo-label">
+
+      📷 포카 사진 선택
 
       <input
 
-        type="file"
+        id="photoInput"
 
-        id="cardImage"
+        type="file"
 
         accept="image/*"
 
-        style="display:none"
+        hidden
+
+        onchange="previewPhoto(event)"
 
       >
 
     </label>
 
+    <img id="preview">
+
     <div class="modal-buttons">
 
-      <button
-
-        class="cancel-btn"
-
-        onclick="closeModal()"
-
-      >
+      <button class="cancel" onclick="closeModal()">
 
         취소
 
       </button>
 
-      <button
+      <button class="save" onclick="addCard()">
 
-        class="save-btn"
-
-        onclick="addCard()"
-
-      >
-
-        추가하기
+        추가
 
       </button>
 
@@ -522,35 +552,79 @@ body {
 
 <script>
 
-/* 저장된 포카 불러오기 */
+/* =========================
+
+   기본 데이터
+
+========================= */
 
 let cards = JSON.parse(
 
-  localStorage.getItem("photocardList")
+  localStorage.getItem("photocardCards")
 
-) || [];
+) || [
 
-/* 버전 정보가 없는 기존 포카 처리 */
+  {
 
-cards = cards.map(card => {
+    id: 1,
 
-  if (!card.version) {
+    name: "포카 01",
 
-    card.version = "버전 미지정";
+    version: "앨범 1집",
+
+    type: "album",
+
+    image: "",
+
+    owned: true
+
+  },
+
+  {
+
+    id: 2,
+
+    name: "포카 02",
+
+    version: "앨범 1집",
+
+    type: "album",
+
+    image: "",
+
+    owned: false
+
+  },
+
+  {
+
+    id: 3,
+
+    name: "포카 03",
+
+    version: "앨범 1집",
+
+    type: "event",
+
+    image: "",
+
+    owned: false
 
   }
 
-  return card;
+];
 
-});
+/* =========================
 
-/* 저장 */
+   저장
+
+========================= */
 
 function saveCards() {
 
   localStorage.setItem(
 
-    "photocardList",
+    "photocardCards",
 
     JSON.stringify(cards)
 
@@ -558,55 +632,411 @@ function saveCards() {
 
 }
 
-/* 추가창 열기 */
+/* =========================
 
-function openModal() {
+   화면 표시
 
-  document.getElementById("modal").style.display = "flex";
+========================= */
 
-  document.getElementById("versionName").value = "";
+function render() {
 
-  document.getElementById("cardName").value = "";
+  const content =
 
-  document.getElementById("cardImage").value = "";
+    document.getElementById("content");
 
-}
+  content.innerHTML = "";
 
-/* 추가창 닫기 */
+  if (cards.length === 0) {
 
-function closeModal() {
+    content.innerHTML = `
 
-  document.getElementById("modal").style.display = "none";
+      <div class="empty">
 
-}
+        아직 등록된 포카가 없어.<br>
 
-/* 포카 추가 */
+        오른쪽 아래 + 버튼으로 추가해줘!
 
-function addCard() {
+      </div>
 
-  const version =
+    `;
 
-    document.getElementById("versionName")
-
-      .value.trim();
-
-  const name =
-
-    document.getElementById("cardName")
-
-      .value.trim();
-
-  const imageInput =
-
-    document.getElementById("cardImage");
-
-  if (!version) {
-
-    alert("버전 이름을 적어줘!");
+    updateCount();
 
     return;
 
   }
+
+  /* 버전별로 묶기 */
+
+  const versions = {};
+
+  cards.forEach(card => {
+
+    if (!versions[card.version]) {
+
+      versions[card.version] = [];
+
+    }
+
+    versions[card.version].push(card);
+
+  });
+
+  Object.keys(versions).forEach(version => {
+
+    const section =
+
+      document.createElement("section");
+
+    section.className = "version";
+
+    const owned =
+
+      versions[version]
+
+      .filter(card => card.owned)
+
+      .length;
+
+    section.innerHTML = `
+
+      <div class="version-title">
+
+        ${escapeHTML(version)}
+
+        <span class="version-count">
+
+          ${owned}/${versions[version].length}
+
+        </span>
+
+      </div>
+
+      <div class="card-grid"></div>
+
+    `;
+
+    const grid =
+
+      section.querySelector(".card-grid");
+
+    versions[version].forEach(card => {
+
+      const element =
+
+        document.createElement("div");
+
+      element.className =
+
+        "card " + (card.owned ? "owned" : "");
+
+      let imageHTML;
+
+      if (card.image) {
+
+        imageHTML = `
+
+          <img
+
+            class="card-image"
+
+            src="${card.image}"
+
+          >
+
+        `;
+
+      } else {
+
+        imageHTML = `
+
+          <div
+
+            class="card-image"
+
+            style="
+
+              display:flex;
+
+              align-items:center;
+
+              justify-content:center;
+
+              font-size:10px;
+
+              color:#aaa;
+
+            "
+
+          >
+
+            PHOTO
+
+          </div>
+
+        `;
+
+      }
+
+      element.innerHTML = `
+
+        ${imageHTML}
+
+        <div class="card-type">
+
+          ${escapeHTML(card.type || "포카")}
+
+        </div>
+
+        <div class="card-name">
+
+          ${escapeHTML(card.name)}
+
+        </div>
+
+      `;
+
+      /* 클릭하면 소장 여부 변경 */
+
+      element.onclick = () => {
+
+        card.owned = !card.owned;
+
+        saveCards();
+
+        render();
+
+      };
+
+      /* 길게 누르면 삭제 */
+
+      let pressTimer;
+
+      element.addEventListener(
+
+        "touchstart",
+
+        () => {
+
+          pressTimer = setTimeout(() => {
+
+            if (
+
+              confirm(
+
+                `"${card.name}" 포카를 삭제할까?`
+
+              )
+
+            ) {
+
+              cards =
+
+                cards.filter(
+
+                  c => c.id !== card.id
+
+                );
+
+              saveCards();
+
+              render();
+
+            }
+
+          }, 800);
+
+        }
+
+      );
+
+      element.addEventListener(
+
+        "touchend",
+
+        () => {
+
+          clearTimeout(pressTimer);
+
+        }
+
+      );
+
+      grid.appendChild(element);
+
+    });
+
+    content.appendChild(section);
+
+  });
+
+  updateCount();
+
+}
+
+/* =========================
+
+   소장 개수
+
+========================= */
+
+function updateCount() {
+
+  const owned =
+
+    cards.filter(card => card.owned).length;
+
+  document.getElementById(
+
+    "ownedCount"
+
+  ).textContent = owned;
+
+  document.getElementById(
+
+    "totalCount"
+
+  ).textContent = cards.length;
+
+}
+
+/* =========================
+
+   팝업 열기
+
+========================= */
+
+function openModal() {
+
+  document
+
+    .getElementById("modal")
+
+    .classList.add("show");
+
+}
+
+/* =========================
+
+   팝업 닫기
+
+========================= */
+
+function closeModal() {
+
+  document
+
+    .getElementById("modal")
+
+    .classList.remove("show");
+
+  document.getElementById(
+
+    "cardName"
+
+  ).value = "";
+
+  document.getElementById(
+
+    "versionName"
+
+  ).value = "";
+
+  document.getElementById(
+
+    "cardType"
+
+  ).value = "";
+
+  document.getElementById(
+
+    "photoInput"
+
+  ).value = "";
+
+  document.getElementById(
+
+    "preview"
+
+  ).style.display = "none";
+
+}
+
+/* =========================
+
+   사진 미리보기
+
+========================= */
+
+let selectedImage = "";
+
+function previewPhoto(event) {
+
+  const file =
+
+    event.target.files[0];
+
+  if (!file) return;
+
+  const reader =
+
+    new FileReader();
+
+  reader.onload = function(e) {
+
+    selectedImage =
+
+      e.target.result;
+
+    const preview =
+
+      document.getElementById("preview");
+
+    preview.src =
+
+      selectedImage;
+
+    preview.style.display =
+
+      "block";
+
+  };
+
+  reader.readAsDataURL(file);
+
+}
+
+/* =========================
+
+   포카 추가
+
+========================= */
+
+function addCard() {
+
+  const name =
+
+    document.getElementById(
+
+      "cardName"
+
+    ).value.trim();
+
+  const version =
+
+    document.getElementById(
+
+      "versionName"
+
+    ).value.trim();
+
+  const type =
+
+    document.getElementById(
+
+      "cardType"
+
+    ).value.trim();
 
   if (!name) {
 
@@ -616,301 +1046,69 @@ function addCard() {
 
   }
 
-  /* 사진이 있는 경우 */
+  if (!version) {
 
-  if (imageInput.files.length > 0) {
-
-    const file = imageInput.files[0];
-
-    const reader = new FileReader();
-
-    reader.onload = function(e) {
-
-      cards.push({
-
-        id: Date.now(),
-
-        version: version,
-
-        name: name,
-
-        image: e.target.result,
-
-        owned: false
-
-      });
-
-      saveCards();
-
-      renderCards();
-
-      closeModal();
-
-    };
-
-    reader.readAsDataURL(file);
-
-  } else {
-
-    /* 사진이 없는 경우 */
-
-    cards.push({
-
-      id: Date.now(),
-
-      version: version,
-
-      name: name,
-
-      image: "",
-
-      owned: false
-
-    });
-
-    saveCards();
-
-    renderCards();
-
-    closeModal();
-
-  }
-
-}
-
-/* 보유 / 미보유 변경 */
-
-function toggleOwned(id) {
-
-  const card = cards.find(
-
-    c => c.id === id
-
-  );
-
-  if (card) {
-
-    card.owned = !card.owned;
-
-    saveCards();
-
-    renderCards();
-
-  }
-
-}
-
-/* 포카 삭제 */
-
-function deleteCard(id) {
-
-  if (!confirm("이 포카를 삭제할까?")) {
+    alert("버전이나 앨범명을 적어줘!");
 
     return;
 
   }
 
-  cards = cards.filter(
+  cards.push({
 
-    c => c.id !== id
+    id: Date.now(),
 
-  );
+    name: name,
+
+    version: version,
+
+    type: type || "포카",
+
+    image: selectedImage,
+
+    owned: false
+
+  });
 
   saveCards();
 
-  renderCards();
+  selectedImage = "";
+
+  closeModal();
+
+  render();
 
 }
 
-/* 포카 화면 표시 */
+/* =========================
 
-function renderCards() {
+   HTML 문자 안전 처리
 
-  const list =
-
-    document.getElementById("cardList");
-
-  list.innerHTML = "";
-
-  /* 보유 개수 */
-
-  const ownedCount =
-
-    cards.filter(c => c.owned).length;
-
-  document.getElementById("info").innerText =
-
-    `가지고 있는 포카 ${ownedCount}장 / 전체 ${cards.length}장`;
-
-  /* 포카가 없을 때 */
-
-  if (cards.length === 0) {
-
-    list.innerHTML =
-
-      `<p class="empty">아직 추가한 포카가 없어!</p>`;
-
-    return;
-
-  }
-
-  /* 버전별로 묶기 */
-
-  const grouped = {};
-
-  cards.forEach(card => {
-
-    const version =
-
-      card.version || "버전 미지정";
-
-    if (!grouped[version]) {
-
-      grouped[version] = [];
-
-    }
-
-    grouped[version].push(card);
-
-  });
-
-  /* 버전별 표시 */
-
-  Object.keys(grouped).forEach(version => {
-
-    const section =
-
-      document.createElement("div");
-
-    section.className =
-
-      "version-section";
-
-    /* 버전 제목 */
-
-    const title =
-
-      document.createElement("div");
-
-    title.className =
-
-      "version-title";
-
-    title.textContent =
-
-      version;
-
-    /* 포카 그리드 */
-
-    const grid =
-
-      document.createElement("div");
-
-    grid.className =
-
-      "grid";
-
-    grouped[version].forEach(card => {
-
-      const div =
-
-        document.createElement("div");
-
-      /* 보유 여부에 따라 색깔 변경 */
-
-      div.className =
-
-        card.owned
-
-          ? "card owned"
-
-          : "card not-owned";
-
-      /* 사진 */
-
-      let imageHTML = card.image
-
-        ? `<img src="${card.image}" alt="${escapeHTML(card.name)}">`
-
-        : `<div class="no-image">사진 없음</div>`;
-
-      div.innerHTML = `
-
-        ${imageHTML}
-
-        <div class="card-name">
-
-          ${escapeHTML(card.name)}
-
-        </div>
-
-        <div class="card-status">
-
-          ${card.owned ? "✓ 보유" : "미보유"}
-
-        </div>
-
-        <button
-
-          onclick="toggleOwned(${card.id})"
-
-        >
-
-          ${card.owned
-
-            ? "미보유로 변경"
-
-            : "보유로 체크"}
-
-        </button>
-
-        <button
-
-          class="delete"
-
-          onclick="deleteCard(${card.id})"
-
-        >
-
-          삭제
-
-        </button>
-
-      `;
-
-      grid.appendChild(div);
-
-    });
-
-    section.appendChild(title);
-
-    section.appendChild(grid);
-
-    list.appendChild(section);
-
-  });
-
-}
-
-/* HTML 문자 안전하게 표시 */
+========================= */
 
 function escapeHTML(text) {
 
-  const div =
+  return String(text)
 
-    document.createElement("div");
+    .replace(/&/g, "&amp;")
 
-  div.textContent =
+    .replace(/</g, "&lt;")
 
-    text;
+    .replace(/>/g, "&gt;")
 
-  return div.innerHTML;
+    .replace(/"/g, "&quot;")
+
+    .replace(/'/g, "&#039;");
 
 }
 
-/* 처음 실행 */
+/* =========================
 
-renderCards();
+   시작
+
+========================= */
+
+render();
 
 </script>
 
