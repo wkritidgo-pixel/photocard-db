@@ -746,17 +746,25 @@ body {
 
 ================================================== */
 
-const STORAGE_KEY =
+const STORAGE_KEY = "my_photocard_checklist_v2";
 
-  "my_photocard_checklist_v2";
+let cards = [];
 
-let cards =
+try {
 
-  JSON.parse(
+  cards =
 
-    localStorage.getItem(STORAGE_KEY)
+    JSON.parse(
 
-  ) || [];
+      localStorage.getItem(STORAGE_KEY)
+
+    ) || [];
+
+} catch (error) {
+
+  cards = [];
+
+}
 
 let selectedImage = "";
 
@@ -1342,7 +1350,7 @@ function closeModal() {
 
 /* ==================================================
 
-   사진
+   사진 미리보기
 
 ================================================== */
 
@@ -1385,6 +1393,158 @@ function previewPhoto(event) {
     };
 
   reader.readAsDataURL(file);
+
+}
+
+/* ==================================================
+
+   사진 용량 줄이기
+
+================================================== */
+
+function compressImage(
+
+  dataURL,
+
+  callback
+
+) {
+
+  const img =
+
+    new Image();
+
+  img.onload =
+
+    function() {
+
+      const maxSize = 500;
+
+      let width =
+
+        img.width;
+
+      let height =
+
+        img.height;
+
+      if (width > height) {
+
+        if (width > maxSize) {
+
+          height =
+
+            Math.round(
+
+              height *
+
+              maxSize /
+
+              width
+
+            );
+
+          width =
+
+            maxSize;
+
+        }
+
+      } else {
+
+        if (height > maxSize) {
+
+          width =
+
+            Math.round(
+
+              width *
+
+              maxSize /
+
+              height
+
+            );
+
+          height =
+
+            maxSize;
+
+        }
+
+      }
+
+      const canvas =
+
+        document.createElement(
+
+          "canvas"
+
+        );
+
+      canvas.width =
+
+        width;
+
+      canvas.height =
+
+        height;
+
+      const ctx =
+
+        canvas.getContext(
+
+          "2d"
+
+        );
+
+      ctx.drawImage(
+
+        img,
+
+        0,
+
+        0,
+
+        width,
+
+        height
+
+      );
+
+      const compressed =
+
+        canvas.toDataURL(
+
+          "image/jpeg",
+
+          0.65
+
+        );
+
+      callback(
+
+        compressed
+
+      );
+
+    };
+
+  img.onerror =
+
+    function() {
+
+      alert(
+
+        "사진을 불러오지 못했어."
+
+      );
+
+    };
+
+  img.src =
+
+    dataURL;
 
 }
 
@@ -1444,7 +1604,83 @@ function addCard() {
 
   }
 
-  cards.push({
+  /* 사진이 있는 경우 */
+
+  if (selectedImage) {
+
+    compressImage(
+
+      selectedImage,
+
+      function(compressedImage) {
+
+        const newCard = {
+
+          id: Date.now(),
+
+          name: name,
+
+          version: version,
+
+          type:
+
+            type || "포카",
+
+          image:
+
+            compressedImage,
+
+          owned: false
+
+        };
+
+        cards.push(
+
+          newCard
+
+        );
+
+        try {
+
+          saveCards();
+
+        } catch (error) {
+
+          /*
+
+            저장 실패하면
+
+            방금 추가한 포카만 되돌림
+
+          */
+
+          cards.pop();
+
+          alert(
+
+            "저장공간이 부족해서 포카를 추가하지 못했어."
+
+          );
+
+          return;
+
+        }
+
+        closeModal();
+
+        render();
+
+      }
+
+    );
+
+    return;
+
+  }
+
+  /* 사진이 없는 경우 */
+
+  const newCard = {
 
     id: Date.now(),
 
@@ -1452,15 +1688,39 @@ function addCard() {
 
     version: version,
 
-    type: type || "포카",
+    type:
 
-    image: selectedImage,
+      type || "포카",
+
+    image: "",
 
     owned: false
 
-  });
+  };
 
-  saveCards();
+  cards.push(
+
+    newCard
+
+  );
+
+  try {
+
+    saveCards();
+
+  } catch (error) {
+
+    cards.pop();
+
+    alert(
+
+      "저장공간이 부족해서 포카를 추가하지 못했어."
+
+    );
+
+    return;
+
+  }
 
   closeModal();
 
